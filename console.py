@@ -84,8 +84,8 @@ class HBNBCommand(cmd.Cmd):
                 obj = eval(cls_name)()
             else:
                 obj = eval(cls_name)(**kwargs)
-                # Updates the dictionary '__objects' with the newly created
-                # object with key <obj class name>.id.
+                # Updates the private class attribute '__objects' (dict)
+                # with the newly created object with key <obj class name>.id.
                 storage.new(obj)
             print(obj.id)
             # Serializes __objects to the JSON file
