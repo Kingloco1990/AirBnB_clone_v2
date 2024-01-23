@@ -42,14 +42,16 @@ class HBNBCommand(cmd.Cmd):
         print("")
         return True
 
-    def do_create(self, args):
-        """ Create an object of any class"""
+    def do_create(self, line):
+        """Usage: create <class> <key 1>=<value 2> <key 2>=<value 2> ...
+        Create a new class instance with given keys/values and print its id.
+        """
         try:
-            if not args:
+            if not line:
                 raise SyntaxError()
-            # Split cmd line args into a list of tokens
+            # Split cmd line args into a list of tokens.
             # using 'space' as a delimiter and assign it to my_list.
-            my_list = args.split(" ")
+            my_list = line.split(" ")
 
             # If my_list is not empty.
             if my_list:
@@ -71,25 +73,24 @@ class HBNBCommand(cmd.Cmd):
                     value = value.strip('"')
                     value = value.replace('"', '\"')
                     value = value.replace("_", " ")
-
-                # Check if value is an integer.
-                if value.isdigit():
-                    value = int(value)
-
-                # Check if value is a float by replacing the decimal point
-                # with nothing and checking if value is a digit.
-                elif value.replace('.', '', 1).isdigit():
-                    value = float(value)
-
+                else:
+                    try:
+                        value = eval(value)
+                    except (SyntaxError, NameError):
+                        continue
                 kwargs[key] = value
 
             if kwargs == {}:
-                obj = self.classes[cls_name]()
+                obj = eval(cls_name)()
             else:
-                obj = self.classes[cls_name](**kwargs)
+                obj = eval(cls_name)(**kwargs)
+                # Updates the dictionary '__objects' with the newly created
+                # object with key <obj class name>.id.
                 storage.new(obj)
             print(obj.id)
+            # Serializes __objects to the JSON file
             obj.save()
+
         except SyntaxError:
             print("** class name missing **")
         except NameError:
