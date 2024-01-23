@@ -42,35 +42,54 @@ class HBNBCommand(cmd.Cmd):
         print("")
         return True
 
-    def do_create(self, line):
-        """Usage: create <class> <key 1>=<value 2> <key 2>=<value 2> ...
-        Create a new class instance with given keys/values and print its id.
-        """
+    def do_create(self, args):
+        """ Create an object of any class"""
         try:
-            if not line:
+            if not args:
                 raise SyntaxError()
-            my_list = line.split(" ")
+            # Split cmd line args into a list of tokens
+            # using 'space' as a delimiter and assign it to my_list.
+            my_list = args.split(" ")
 
+            # If my_list is not empty.
+            if my_list:
+                # Extract class name.
+                cls_name = my_list[0]
+            else:
+                # Raise syntaxError for missing class name.
+                raise SyntaxError()
+
+            # Initialize an empty dictionary named 'kwargs'.
             kwargs = {}
-            for i in range(1, len(my_list)):
-                key, value = tuple(my_list[i].split("="))
+
+            # Iterate through the elements of my_list starting from index 1.
+            for element in my_list[1:]:
+                # Split each element into key and value
+                # using '=' as a delimiter.
+                key, value = element.split("=")
                 if value[0] == '"':
-                    value = value.strip('"').replace("_", " ")
-                else:
-                    try:
-                        value = eval(value)
-                    except (SyntaxError, NameError):
-                        continue
+                    value = value.strip('"')
+                    value = value.replace('"', '\"')
+                    value = value.replace("_", " ")
+
+                # Check if value is an integer.
+                if value.isdigit():
+                    value = int(value)
+
+                # Check if value is a float by replacing the decimal point
+                # with nothing and checking if value is a digit.
+                elif value.replace('.', '', 1).isdigit():
+                    value = float(value)
+
                 kwargs[key] = value
 
             if kwargs == {}:
-                obj = eval(my_list[0])()
+                obj = self.classes[cls_name]()
             else:
-                obj = eval(my_list[0])(**kwargs)
+                obj = self.classes[cls_name](**kwargs)
                 storage.new(obj)
             print(obj.id)
             obj.save()
-
         except SyntaxError:
             print("** class name missing **")
         except NameError:
