@@ -1,5 +1,4 @@
 -- This script prepares a MySQL server for the project.
-
 -- Check if the hbnb_dev_db database exists; if not, create it.
 CREATE DATABASE IF NOT EXISTS hbnb_dev_db;
 
