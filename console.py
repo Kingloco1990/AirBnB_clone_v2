@@ -84,11 +84,10 @@ class HBNBCommand(cmd.Cmd):
                 obj = eval(cls_name)()
             else:
                 obj = eval(cls_name)(**kwargs)
-                # Updates the private class attribute '__objects' (dict)
-                # with the newly created object with key <obj class name>.id.
+                # Adds new object to storage.
                 storage.new(obj)
             print(obj.id)
-            # Serializes __objects to the JSON file
+            # Serializes object and saves it to the JSON file.
             obj.save()
 
         except SyntaxError:
@@ -163,18 +162,23 @@ class HBNBCommand(cmd.Cmd):
         """Usage: all or all <class> or <class>.all()
         Display string representations of all instances of a given class.
         If no class is specified, displays all instantiated objects."""
+        # Retrieve all objects in storage.
+        objs_dict = storage.all()
+        my_list = []
         if not line:
-            o = storage.all()
-            print([o[k].__str__() for k in o])
+            for key in objs_dict:
+                my_list.append(objs_dict[key].__str__())
+            print(my_list)
             return
-        try:
+        try:        
             args = line.split(" ")
             if args[0] not in self.__classes:
                 raise NameError()
-
-            o = storage.all(eval(args[0]))
-            print([o[k].__str__() for k in o])
-
+            for key in objs_dict:
+                obj_key = key.split('.')
+                if obj_key[0] == args[0]:
+                    my_list.append(objs_dict[key].__str__())
+            print(my_list)
         except NameError:
             print("** class doesn't exist **")
 
