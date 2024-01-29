@@ -85,8 +85,8 @@ class DBStorage:
             for obj in query_objs:
                 return {'{}.{}'.format(type(obj).__name__, obj.id): obj}
         else:
-            for key, value in classes:
-                query_objs = self.__session.query(value)
+            for cls_obj in classes.values():
+                query_objs = self.__session.query(cls_obj)
                 for obj in query_objs:
                     return {'{}.{}'.format(type(obj).__name__, obj.id): obj}
 
