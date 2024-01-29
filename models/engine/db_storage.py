@@ -16,8 +16,17 @@ from os import getenv
 from models.base_model import BaseModel, Base
 from models.city import City
 from models.state import State
+from models.user import User
+from models.place import Place
+from models.review import Review
+from models.amenity import Amenity
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
+
+
+classes = {'State': State, 'City': City,
+               'User': User, 'Place': Place,
+               'Review': Review, 'Amenity': Amenity}
 
 
 class DBStorage:
@@ -72,11 +81,14 @@ class DBStorage:
         """
         all_objs = {}
         if cls:
-            all_objs = self.__session.query(cls).all()
-        elif cls is None:
-            all_objs = self.__session.query().all()
-        return {'{}.{}'.format(type(obj).__name__, obj.id): obj
-                for obj in all_objs}
+            query_objs = self.__session.query(cls).all()
+            for obj in query_objs:
+                return {'{}.{}'.format(type(obj).__name__, obj.id): obj}
+        else:
+            for key, value in classes:
+                query_objs = self.__session.query(value)
+                for obj in query_objs:
+                    return {'{}.{}'.format(type(obj).__name__, obj.id): obj}
 
     def new(self, obj):
         """Add a new object to the current database session.
