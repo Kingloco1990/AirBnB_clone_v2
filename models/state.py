@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 """ State Module for HBNB project """
+import models
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 import os
 from models.city import City
-from models import storage
 
 
 class State(BaseModel, Base):
@@ -32,7 +32,7 @@ class State(BaseModel, Base):
             """
             my_list = []
             # Retrieve City objects (or instances) in storage.
-            my_obj = storage.all(City)
+            my_obj = models.storage.all(City)
 
             # Filter City instances that have state_id equal to the current State's id.
             for obj in my_obj.values():
