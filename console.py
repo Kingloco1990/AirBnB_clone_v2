@@ -43,7 +43,7 @@ class HBNBCommand(cmd.Cmd):
         return True
 
     def do_create(self, line):
-        """Usage: create <class> <key 1>=<value 2> <key 2>=<value 2> ...
+        """Usage: create <class> <key 1>=<value 1> <key 2>=<value 2> ...
         Create a new class instance with given keys/values and print its id.
         """
         try:
