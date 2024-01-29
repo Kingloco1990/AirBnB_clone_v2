@@ -172,34 +172,37 @@ class HBNBCommand(cmd.Cmd):
         print("[Usage]: create <className>\n")
 
     def do_show(self, args):
-        """ Method to show an individual object """
-        new = args.partition(" ")
-        c_name = new[0]
-        c_id = new[2]
+        """
+        Prints the string representation of an instance based
+        on the class name and id.
 
-        # guard against trailing args
-        if c_id and ' ' in c_id:
-            c_id = c_id.partition(' ')[0]
+        Args:
+            line (str): The input line provided by the user.
 
-        if not c_name:
-            print("** class name missing **")
-            return
-
-        if c_name not in HBNBCommand.classes:
-            print("** class doesn't exist **")
-            return
-
-        if not c_id:
-            print("** instance id missing **")
-            return
-
-        key = c_name + "." + c_id
+        Usage: show <class name> <id> or <class name>.show(<id>)
+        """
         try:
+            if not args:
+                raise SyntaxError()
+            my_list = args.split(" ")
+            if my_list[0] not in self.classes:
+                raise NameError()
+            if len(my_list) < 2:
+                raise IndexError()
             objects = storage.all()
+            key = my_list[0] + '.' + my_list[1]
             if key in objects:
                 print(objects[key])
+            else:
+                raise KeyError()
+        except SyntaxError:
+            print("** class name missing **")
+        except NameError:
+            print("** class doesn't exist **")
+        except IndexError:
+            print("** instance id missing **")
         except KeyError:
-            print("** no instance found **")
+            print("** no instance found **")            
 
     def help_show(self):
         """ Help information for the show command """
