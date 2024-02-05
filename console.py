@@ -250,9 +250,7 @@ class HBNBCommand(cmd.Cmd):
             return
         try:
             args = args.split(" ")
-            print(args)
             cls = eval(args[0])
-            print(cls)
             if cls not in self.classes.values():
                 raise NameError()
             objs = models.storage.all(eval(args[0]))
