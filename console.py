@@ -2,8 +2,8 @@
 """ Console Module """
 import cmd
 import sys
+import models
 from models.base_model import BaseModel
-from models.__init__ import storage
 from models.user import User
 from models.place import Place
 from models.state import State
@@ -158,7 +158,7 @@ class HBNBCommand(cmd.Cmd):
                 obj = self.classes[cls_name]()
             else:
                 obj = self.classes[cls_name](**kwargs)
-                storage.new(obj)
+                models.storage.new(obj)
             print(obj.id)
             obj.save()
         except SyntaxError:
@@ -189,7 +189,7 @@ class HBNBCommand(cmd.Cmd):
                 raise NameError()
             if len(my_list) < 2:
                 raise IndexError()
-            objects = storage.all()
+            objects = models.storage.all()
             key = my_list[0] + '.' + my_list[1]
             if key in objects:
                 print(objects[key])
@@ -202,7 +202,7 @@ class HBNBCommand(cmd.Cmd):
         except IndexError:
             print("** instance id missing **")
         except KeyError:
-            print("** no instance found **")            
+            print("** no instance found **")
 
     def help_show(self):
         """ Help information for the show command """
@@ -232,8 +232,8 @@ class HBNBCommand(cmd.Cmd):
         key = c_name + "." + c_id
 
         try:
-            del(storage.all()[key])
-            storage.save()
+            del (models.storage.all()[key])
+            models.storage.save()
         except KeyError:
             print("** no instance found **")
 
@@ -244,21 +244,21 @@ class HBNBCommand(cmd.Cmd):
 
     def do_all(self, args):
         """ Shows all objects, or all objects of a class"""
-        print_list = []
-
-        if args:
-            args = args.split(' ')[0]  # remove possible trailing args
-            if args not in HBNBCommand.classes:
-                print("** class doesn't exist **")
-                return
-            for k, v in storage.all().items():
-                if k.split('.')[0] == args:
-                    print_list.append(str(v))
-        else:
-            for k, v in storage.all().items():
-                print_list.append(str(v))
-
-        print(print_list)
+        if not args:
+            objs = models.storage.all()
+            print([objs[key].__str__() for key in objs])
+            return
+        try:
+            args = args.split(" ")
+            print(args)
+            cls = eval(args[0])
+            print(cls)
+            if cls not in self.classes.values():
+                raise NameError()
+            objs = models.storage.all(eval(args[0]))
+            print([objs[key].__str__() for key in objs])
+        except NameError:
+            print("** class doesn't exist **")
 
     def help_all(self):
         """ Help information for the all command """
@@ -268,7 +268,7 @@ class HBNBCommand(cmd.Cmd):
     def do_count(self, args):
         """Count current number of class instances"""
         count = 0
-        for k, v in storage.all().items():
+        for k, v in models.storage.all().items():
             if args == k.split('.')[0]:
                 count += 1
         print(count)
@@ -304,7 +304,7 @@ class HBNBCommand(cmd.Cmd):
         key = c_name + "." + c_id
 
         # determine if key is present
-        if key not in storage.all():
+        if key not in models.storage.all():
             print("** no instance found **")
             return
 
@@ -338,7 +338,7 @@ class HBNBCommand(cmd.Cmd):
             args = [att_name, att_val]
 
         # retrieve dictionary of current objects
-        new_dict = storage.all()[key]
+        new_dict = models.storage.all()[key]
 
         # iterate through attr names and values
         for i, att_name in enumerate(args):
@@ -364,6 +364,7 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
