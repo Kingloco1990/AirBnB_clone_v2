@@ -79,13 +79,13 @@ class DBStorage:
         """
         all_objs = {}
         if cls:
-            query_objs = self.__session.query(cls)
+            query_objs = self.__session.query(cls).all()
             for obj in query_objs:
                 key = '{}.{}'.format(type(obj).__name__, obj.id)
                 all_objs[key] = obj
         else:
             for cls_obj in classes:
-                query_objs = self.__session.query(cls_obj)
+                query_objs = self.__session.query(cls_obj).all()
                 for obj in query_objs:
                     key = '{}.{}'.format(type(obj).__name__, obj.id)
                     all_objs[key] = obj
