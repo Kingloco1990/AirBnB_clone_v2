@@ -6,6 +6,8 @@ from sqlalchemy import Column, String, ForeignKey, Integer, Float
 from os import getenv
 from sqlalchemy.orm import relationship
 from models.review import Review
+from sqlalchemy.schema import Table
+from models.amenity import Amenity
 
 
 class Place(BaseModel, Base):
@@ -26,6 +28,7 @@ class Place(BaseModel, Base):
 
 if getenv("HBNB_TYPE_STORAGE") == "db":
     reviews = relationship('Review', backref='place', cascade='delete')
+    amenities = relationship('Amenity', secondary='place_amenity', viewonly=False)
 
 if getenv("HBNB_TYPE_STORAGE") == "FileStorage":
     @property
@@ -41,3 +44,38 @@ if getenv("HBNB_TYPE_STORAGE") == "FileStorage":
                 my_list.append(obj)
 
         return (my_list)
+
+    @property
+    def amenities(self):
+        my_list = []
+        my_obj = models.storage.all(Amenity)
+        for obj in my_obj.values():
+            if obj.id in self.amenity_ids:
+                my_list.append(obj)
+
+        return (my_list)
+    
+    @amenities.setter
+    def amenities(self, value):
+        if type(value) == Amenity:
+            self.amenity_ids.append(value.id)
+        
+
+place_amenity = Table(
+    'association',
+    Base.metadata,
+    Column(
+        'place_id',
+        String(60),
+        ForeignKey('places.id'),
+        primary_key=True,
+        nullable=False
+    ),
+    Column(
+        'amenity_id',
+        String(60),
+        ForeignKey('amenities.id'),
+        primary_key=True,
+        nullable=False
+    )
+)
