@@ -2,12 +2,31 @@
 """Module defining the Place class for the AirBnB clone project."""
 import models
 from models.base_model import BaseModel, Base
-from sqlalchemy import Column, String, ForeignKey, Integer, Float
+from sqlalchemy import Column, String, ForeignKey, Integer, Float, Table
 from os import getenv
 from sqlalchemy.orm import relationship
 from models.review import Review
-from sqlalchemy.schema import Table
 from models.amenity import Amenity
+
+
+place_amenity = Table(
+    'place_amenity',
+    Base.metadata,
+    Column(
+        'place_id',
+        String(60),
+        ForeignKey('places.id'),
+        primary_key=True,
+        nullable=False
+    ),
+    Column(
+        'amenity_id',
+        String(60),
+        ForeignKey('amenities.id'),
+        primary_key=True,
+        nullable=False
+    )
+)
 
 
 class Place(BaseModel, Base):
@@ -59,7 +78,7 @@ if getenv("HBNB_TYPE_STORAGE") == "db":
 
 if getenv("HBNB_TYPE_STORAGE") == "FileStorage":
     @property
-    def review(self):
+    def reviews(self):
         """Getter attribute that returns a list of Review instances associated
             with the current Place.
 
@@ -120,22 +139,3 @@ if getenv("HBNB_TYPE_STORAGE") == "FileStorage":
         """
         if type(value) == Amenity:
             self.amenity_ids.append(value.id)
-
-place_amenity = Table(
-    'association',
-    Base.metadata,
-    Column(
-        'place_id',
-        String(60),
-        ForeignKey('places.id'),
-        primary_key=True,
-        nullable=False
-    ),
-    Column(
-        'amenity_id',
-        String(60),
-        ForeignKey('amenities.id'),
-        primary_key=True,
-        nullable=False
-    )
-)
