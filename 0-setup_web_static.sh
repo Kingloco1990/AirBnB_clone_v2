@@ -55,12 +55,15 @@ echo "Ceci n'est pas une page" > /var/www/error/custom_404.html
 file="/etc/nginx/sites-available/default"
 sed -i "s/location \/ {/location \/redirect_me {/; s/try_files \$uri \$uri\/ =404;/return 301 https:\/\/www.youtube.com\/watch?v=QH2-TGUlwu4;/" "$file"
 
-# Define the content to append for custom 404 page
-content='return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;\n\t}\n\t\t\n\terror_page 404 /custom_404.html;\n\tlocation = /custom_404.html {\n\t\troot /var/www/error;\n\t\tinternal;'
+# Define the content to append
+# The content variable stores the text to be appended to the configuration file.
+content='\n\terror_page 404 /custom_404.html;\n\tlocation = /custom_404.html {\n\t\troot /var/www/error;\n\t\tinternal;\n\t}'
 
-# Append content after each location block in the Nginx configuration file
+# Use sed to append the content after the specified text in every location block in the file
+# Check if the specified text "error_page 404" is already present in the configuration file.
+# If not found, use sed to append the content variable after the closing brace of each location block in the file.
 if ! grep -qF "error_page 404" "$file"; then
-    sed "s|return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;|${content}|" "$file"
+    sed -i '/^\s\+}/a\'"$content" "$file"
 fi
 
 # Add a custom HTTP header with hostname as value
@@ -70,7 +73,7 @@ fi
 
 # Append location block to serve content from /data/web_static/current/
 if ! grep -qF "location /hbnb_static/" "$file"; then
-    sed -i "s|internal;|internal;\n\t}\n\n\tlocation /hbnb_static {\n\t\talias /data/web_static/current/;|" "$file"
+    sed -i "s|internal;|internal;\n\t}\n\n\tlocation /hbnb_static/ {\n\t\talias /data/web_static/current/;|" "$file"
 fi
 
 # Restart Nginx to apply the changes
