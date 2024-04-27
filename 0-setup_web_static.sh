@@ -56,11 +56,11 @@ file="/etc/nginx/sites-available/default"
 sed -i "s/location \/ {/location \/redirect_me {/; s/try_files \$uri \$uri\/ =404;/return 301 https:\/\/www.youtube.com\/watch?v=QH2-TGUlwu4;/" "$file"
 
 # Define the content to append for custom 404 page
-content='\n\terror_page 404 /custom_404.html;\n\tlocation = /custom_404.html {\n\t\troot /var/www/error;\n\t\tinternal;\n\t}'
+content='return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;\n\t}\n\t\t\n\terror_page 404 /custom_404.html;\n\tlocation = /custom_404.html {\n\t\troot /var/www/error;\n\t\tinternal;'
 
 # Append content after each location block in the Nginx configuration file
 if ! grep -qF "error_page 404" "$file"; then
-    sed -i '/^\s\+}/a\'"$content" "$file"
+    sed "s|return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;|${content}|" "$file"
 fi
 
 # Add a custom HTTP header with hostname as value
