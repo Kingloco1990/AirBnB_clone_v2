@@ -47,4 +47,4 @@ if ! grep -qF "location /hbnb_static/" "$file"; then
 fi
 
 # Restart Nginx to apply the changes
-service nginx restart
+sudo service nginx restart
