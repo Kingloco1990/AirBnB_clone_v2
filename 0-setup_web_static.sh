@@ -38,7 +38,7 @@ file="/etc/nginx/sites-available/default"
 
 # Append location block to serve content from /data/web_static/current/
 if ! grep -qF "location /hbnb_static/" "$file"; then
-    sed -i "s|internal;|internal;\n\t}\n\n\tlocation /hbnb_static/ {\n\t\talias /data/web_static/current/;|" "$file"
+    sed -i "s/internal;/internal;\n\t}\n\n\tlocation \/hbnb_static\/ {\n\t\talias \/data\/web_static\/current\/;/" "$file"
 fi
 
 # Restart Nginx to apply the changes
