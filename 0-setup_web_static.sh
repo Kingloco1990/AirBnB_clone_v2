@@ -1,45 +1,37 @@
 #!/usr/bin/env bash
-# This script sets up an Nginx server with custom configurations and content.
+# sets up your web servers for the deployment of web_static
 
-# Update package lists
-sudo apt-get update
+trap 'exit 0' ERR
 
-# Install Nginx
-sudo apt-get install -y nginx
+if ! command -v nginx &> /dev/null; then
+    sudo apt update
+    sudo apt install nginx -y
+fi
+sudo mkdir -p "/data/web_static/releases/test/"
+sudo mkdir -p "/data/web_static/shared/"
 
-# Create necessary directories for web_static
-sudo mkdir -p /data/web_static/releases/test/
-sudo mkdir -p /data/web_static/shared/
+body_content="Holberton School Web site under construction!"
+current_date=$(date +"%Y-%m-%d %H:%M:%S")
+html_content="<html>
+  <head></head>
+  <body>$body_content</body>
+  <p>Generated on: $current_date</p>
+</html>"
 
-# Create and write content to the HTML file
-sudo tee /data/web_static/releases/test/index.html >/dev/null <<EOF
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Page</title>
-</head>
-<body>
-    <h1>This is a test page</h1>
-    <p>Hello, world!</p>
-</body>
-</html>
-EOF
+echo "$html_content" | sudo tee /data/web_static/releases/test/index.html > /dev/null
 
-# Create symbolic link for web_static
-sudo ln -sf /data/web_static/releases/test/ /data/web_static/current
+rm -rf /data/web_static/current
+ln -sf /data/web_static/releases/test/ /data/web_static/current
 
-# Change ownership of /data/ folder to ubuntu user and group
 sudo chown -R ubuntu:ubuntu /data/
 
-# Define the path to the Nginx configuration file
-file="/etc/nginx/sites-available/default"
+sudo wget -q -O /etc/nginx/sites-available/default http://exampleconfig.com/static/raw/nginx/ubuntu20.04/etc/nginx/sites-available/default
+config="/etc/nginx/sites-available/default"
+echo 'Holberton School Hello World!' | sudo tee /var/www/html/index.html > /dev/null
+sudo sed -i '/^}$/i \ \n\tlocation \/redirect_me {return 301 https:\/\/www.youtube.com\/watch?v=QH2-TGUlwu4;}' $config
+sudo sed -i '/^}$/i \ \n\tlocation @404 {return 404 "Ceci n'\''est pas une page\\n";}' $config
+sudo sed -i 's/=404/@404/g' $config
+sudo sed -i "/^server {/a \ \tadd_header X-Served-By $HOSTNAME;" $config
+sudo sed -i '/^server {/a \ \n\tlocation \/hbnb_static {alias /data/web_static/current/;index index.html;}' $config
 
-# Append location block to serve content from /data/web_static/current/
-if ! grep -qF "location /hbnb_static" "$file"; then
-    sed -i "s/internal;/internal;\n\t}\n\n\tlocation \/hbnb_static {\n\t\talias \/data\/web_static\/current\/;/" "$file"
-fi
-
-# Restart Nginx to apply the changes
 sudo service nginx restart
