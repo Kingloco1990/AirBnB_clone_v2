@@ -1,15 +1,11 @@
 #!/usr/bin/env bash
 # This script sets up an Nginx server with custom configurations and content.
 
-# Check if Nginx is installed
-if ! command -v nginx &> /dev/null
-then
-    echo "Nginx is not installed. Installing..."
-    # Update package lists
-    sudo apt-get update
-    # Install Nginx
-    sudo apt-get install -y nginx
-fi
+# Update package lists
+sudo apt-get update
+
+# Install Nginx
+sudo apt-get install -y nginx
 
 # Create necessary directories for web_static
 sudo mkdir -p "/data/web_static/releases/test/"
