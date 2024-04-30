@@ -2,7 +2,8 @@
 # This script sets up an Nginx server with custom configurations and content.
 
 # Check if Nginx is installed
-if ! command -v nginx &> /dev/null; then
+if ! command -v nginx &> /dev/null
+then
     echo "Nginx is not installed. Installing..."
     # Update package lists
     sudo apt-get update
@@ -62,7 +63,7 @@ content='\\n\terror_page 404 /custom_404.html;\n\tlocation = /custom_404.html {\
 # Check if the specified text "error_page 404" is already present in the configuration file.
 # If not found, use sed to append the content variable after the closing brace of each location block in the file.
 if ! grep -qF "error_page 404" "$file"; then
-    sed -i '/^\s*}/a'"$content" "$file"
+    sed '/^\s\+}/a'"$content" "$file"
 fi
 
 # Add a custom HTTP header with hostname as value
