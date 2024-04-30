@@ -41,6 +41,7 @@ sudo sed -i '/^}$/i \ \n\tlocation @404 {return 404 "Ceci n'\''est pas une page\
 sudo sed -i 's/=404/@404/g' $config
 sudo sed -i "/^server {/a \ \tadd_header X-Served-By $HOSTNAME;" $config
 # Append location block to serve content from /data/web_static/current/
-sed '61i \\n\tlocation /hbnb_static/ {\n\t\talias /data/web_static/current/;\n\t}' $config
+# configure nginx
+sudo sed -i '44i \\n\tlocation /hbnb_static {\n\t\talias /data/web_static/current/;\n\t}' $config
 
 sudo service nginx restart
