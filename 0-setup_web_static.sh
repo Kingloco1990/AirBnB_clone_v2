@@ -42,6 +42,9 @@ sudo ln -s "$target_folder" "$symbolic_link"
 # Change ownership of /data/ folder to ubuntu user and group
 sudo chown -R ubuntu:ubuntu /data/
 
+# Define the path to the Nginx configuration file
+file="/etc/nginx/sites-available/default"
+
 # Append location block to serve content from /data/web_static/current/
 if ! grep -qF "location /hbnb_static/" "$file"; then
     sed -i "s|internal;|internal;\n\t}\n\n\tlocation /hbnb_static/ {\n\t\talias /data/web_static/current/;|" "$file"
