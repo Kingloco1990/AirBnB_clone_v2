@@ -8,8 +8,8 @@ sudo apt-get update
 sudo apt-get install -y nginx
 
 # Create necessary directories for web_static
-sudo mkdir -p "/data/web_static/releases/test/"
-sudo mkdir -p "/data/web_static/shared/"
+sudo mkdir -p /data/web_static/releases/test/
+sudo mkdir -p /data/web_static/shared/
 
 # Create and write content to the HTML file
 sudo tee /data/web_static/releases/test/index.html >/dev/null <<EOF
@@ -28,12 +28,7 @@ sudo tee /data/web_static/releases/test/index.html >/dev/null <<EOF
 EOF
 
 # Create symbolic link for web_static
-target_folder="/data/web_static/releases/test/"
-symbolic_link="/data/web_static/current"
-if [ -L "$symbolic_link" ]; then
-    rm "$symbolic_link" # If symbolic link exists, delete it
-fi
-sudo ln -s "$target_folder" "$symbolic_link"
+sudo ln -sf /data/web_static/releases/test/ /data/web_static/current
 
 # Change ownership of /data/ folder to ubuntu user and group
 sudo chown -R ubuntu:ubuntu /data/
