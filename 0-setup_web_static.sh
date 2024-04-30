@@ -40,6 +40,9 @@ sudo sed -i '/^}$/i \ \n\tlocation \/redirect_me {return 301 https:\/\/www.youtu
 sudo sed -i '/^}$/i \ \n\tlocation @404 {return 404 "Ceci n'\''est pas une page\\n";}' $config
 sudo sed -i 's/=404/@404/g' $config
 sudo sed -i "/^server {/a \ \tadd_header X-Served-By $HOSTNAME;" $config
-sudo sed -i '/^server {/a \ \n\tlocation \/hbnb_static {alias /data/web_static/current/;index index.html;}' $config
+# Append location block to serve content from /data/web_static/current/
+if ! grep -qF "location /hbnb_static"  $config; then
+    sed -i "s/internal;/internal;\n\t}\n\n\tlocation \/hbnb_static {\n\t\talias \/data\/web_static\/current\/;/" $config
+fi
 
 sudo service nginx restart
