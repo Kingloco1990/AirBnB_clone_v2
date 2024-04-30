@@ -37,7 +37,7 @@ symbolic_link="/data/web_static/current"
 if [ -L "$symbolic_link" ]; then
     rm "$symbolic_link" # If symbolic link exists, delete it
 fi
-ln -s "$target_folder" "$symbolic_link"
+sudo ln -s "$target_folder" "$symbolic_link"
 
 # Change ownership of /data/ folder to ubuntu user and group
 sudo chown -R ubuntu:ubuntu /data/
