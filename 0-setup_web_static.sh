@@ -1,28 +1,36 @@
 #!/usr/bin/env bash
-# sets up your web servers for the deployment of web_static
+# This script sets up an Nginx server with custom configurations and content.
 
-trap 'exit 0' ERR
+# Update package lists
+sudo apt-get update
 
-if ! command -v nginx &> /dev/null; then
-    sudo apt update
-    sudo apt install nginx -y
-fi
-sudo mkdir -p "/data/web_static/releases/test/"
-sudo mkdir -p "/data/web_static/shared/"
+# Install Nginx
+sudo apt-get install -y nginx
 
-body_content="Holberton School Web site under construction!"
-current_date=$(date +"%Y-%m-%d %H:%M:%S")
-html_content="<html>
-  <head></head>
-  <body>$body_content</body>
-  <p>Generated on: $current_date</p>
-</html>"
+# Create necessary directories for web_static
+sudo mkdir -p /data/web_static/releases/test/
+sudo mkdir -p /data/web_static/shared/
 
-echo "$html_content" | sudo tee /data/web_static/releases/test/index.html > /dev/null
+# Create and write content to the HTML file
+sudo tee /data/web_static/releases/test/index.html >/dev/null <<EOF
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Page</title>
+</head>
+<body>
+    <h1>This is a test page</h1>
+    <p>Hello, world!</p>
+</body>
+</html>
+EOF
 
-rm -rf /data/web_static/current
-ln -sf /data/web_static/releases/test/ /data/web_static/current
+# Create symbolic link for web_static
+sudo ln -sf /data/web_static/releases/test/ /data/web_static/current
 
+# Change ownership of /data/ folder to ubuntu user and group
 sudo chown -R ubuntu:ubuntu /data/
 
 sudo wget -q -O /etc/nginx/sites-available/default http://exampleconfig.com/static/raw/nginx/ubuntu20.04/etc/nginx/sites-available/default
