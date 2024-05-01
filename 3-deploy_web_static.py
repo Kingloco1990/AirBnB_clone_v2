@@ -4,7 +4,7 @@
 """
 from fabric.api import local, run, env, put
 from datetime import datetime
-from os.path import exists
+from os.path import exists, basename
 
 # Define the list of host IP addresses
 env.hosts = ['54.164.209.217', '18.204.9.187']
@@ -58,16 +58,19 @@ def do_deploy(archive_path):
         # Upload the archive to /tmp/ directory on the web server
         put(archive_path, '/tmp/')
 
-        # Extract the archive to the folder:
-        # /data/web_static/releases/<archive filename without extension>
-        archive_name = archive_path.split('/')[-1]
-        folder_name = archive_name.split('.')[0]
+        # Get the filename without extension
+        folder_name = basename(archive_path).split('.')[0]
+        
+        # Create the release directory
         run('mkdir -p /data/web_static/releases/{}/'.format(folder_name))
-        run('tar -xzf /tmp/{} -C /data/web_static/releases/{}/'.format(
-            archive_name, folder_name))
+        
+        
+        # Uncompress the archive to the release directory
+        run("tar -xzf /tmp/{}.tgz -C /data/web_static/releases/{}/".format(
+            folder_name, folder_name))
 
         # Delete the archive from the web server
-        run('rm /tmp/{}'.format(archive_name))
+        run("rm /tmp/{}.tgz".format(folder_name))
 
         # Move the contents of the extracted folder to the parent folder
         run('mv /data/web_static/releases/{}/web_static/* '
@@ -100,7 +103,5 @@ def deploy():
     if archive_path is None:
         return False
 
-    # Call do_deploy to distribute the archive
-    result = do_deploy(archive_path)
-
-    return result
+    # Deploy the archive to the web servers
+    return do_deploy(archive_path)
