@@ -90,6 +90,7 @@ def do_deploy(archive_path):
     except Exception:
         return False
 
+
 def deploy():
     """
     Deploys the archive to the web servers.
