@@ -37,7 +37,8 @@ def do_pack():
         return None
     else:
         # Return the path to the archive
-        return "versions/{}".format(archive_name)
+        path = "versions/{}".format(archive_name)
+        return path
 
 
 def do_deploy(archive_path):
@@ -58,19 +59,16 @@ def do_deploy(archive_path):
         # Upload the archive to /tmp/ directory on the web server
         put(archive_path, '/tmp/')
 
-        # Get the filename without extension
-        folder_name = basename(archive_path).split('.')[0]
-        
-        # Create the release directory
+        # Extract the archive to the folder:
+        # /data/web_static/releases/<archive filename without extension>
+        archive_name = archive_path.split('/')[-1]
+        folder_name = archive_name.split('.')[0]
         run('mkdir -p /data/web_static/releases/{}/'.format(folder_name))
-        
-        
-        # Uncompress the archive to the release directory
-        run("tar -xzf /tmp/{}.tgz -C /data/web_static/releases/{}/".format(
-            folder_name, folder_name))
+        run('tar -xzf /tmp/{} -C /data/web_static/releases/{}/'.format(
+            archive_name, folder_name))
 
         # Delete the archive from the web server
-        run("rm /tmp/{}.tgz".format(folder_name))
+        run('rm /tmp/{}'.format(archive_name))
 
         # Move the contents of the extracted folder to the parent folder
         run('mv /data/web_static/releases/{}/web_static/* '
@@ -91,7 +89,6 @@ def do_deploy(archive_path):
 
     except Exception:
         return False
-
 
 def deploy():
     """
