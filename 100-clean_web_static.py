@@ -18,13 +18,16 @@ def do_clean(number=0):
     Returns:
         None
     """
+    if number == 0:
+        number = 1
+
     # Delete unnecessary archives in the versions folder
-    local("ls -t versions/ | tail -n +{} | sudo xargs -I {{}} rm versions/{{}}".
-          format(number + 1))
+    local("ls -t versions/ | tail -n +{} | sudo xargs "
+          "-I {{}} rm versions/{{}}".format(number))
 
     # Delete unnecessary archives in the /data/web_static/releases folder
     releases_folder = "/data/web_static/releases"
-    releases = run("ls -tr {} | tail -n +{}".
-                   format(releases_folder, number + 1)).split('\n')
+    releases = run("ls -tr {} | tail -n +{}".format(
+        releases_folder, number)).split('\n')
     for release in releases:
         run("rm -rf {}/{}".format(releases_folder, release))
