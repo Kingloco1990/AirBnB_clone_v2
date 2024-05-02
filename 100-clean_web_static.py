@@ -18,6 +18,10 @@ def do_clean(number=0):
     Returns:
         None
     """
+    if int(number) == 0:
+        number = 1
+    number = int(number) + 1
+
     # Delete unnecessary archives in the versions folder
     local("ls -t versions/ | tail -n +{} | sudo xargs "
           "-I {{}} rm versions/{{}}".format(number))
