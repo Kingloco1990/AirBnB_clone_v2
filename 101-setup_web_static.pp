@@ -9,38 +9,28 @@ package { 'nginx':
     require => Exec['apt-get-update'],
 }
 
-exec { 'test':
-    command => 'sudo mkdir -p /data/web_static/releases/test/',
-    path    => ['/usr/bin', '/usr/sbin',],
-    require => Package['nginx'],
-}
-
-exec { 'shared':
-    command => 'sudo mkdir -p /data/web_static/shared/',
-    path    => ['/usr/bin', '/usr/sbin',],
+exec { 'create_directories':
+    command => '/usr/bin/mkdir -p "/data/web_static/releases/test/" "/data/web_static/shared/"',
     require => Package['nginx'],
 }
 
 exec { 'index.html':
-    command => 'echo Hi | sudo tee /data/web_static/releases/test/index.html >/dev/null',
-    path    => ['/usr/bin', '/usr/sbin',],
+    command => '/usr/bin/echo "Nginx configuration test" | sudo tee /data/web_static/releases/test/index.html >/dev/null',
     require => Package['nginx'],
 }
 
 exec { 'symbolic link':
-    command => 'ln -sf /data/web_static/releases/test/ /data/web_static/current',
-    path    => ['/usr/bin', '/usr/sbin',],
+    command => '/usr/bin/ln -s /data/web_static/releases/test/ /data/web_static/current',
     require => Package['nginx'],
 }
 
 exec { 'ownership':
-    command => 'sudo chown -R ubuntu:ubuntu /data/',
-    path    => ['/usr/bin', '/usr/sbin',],
+    command => '/usr/bin/chown -R ubuntu:ubuntu /data/',
     require => Package['nginx'],
 }
 
 exec { 'hbnb_static':
-    command => 'sed -i "61i \\n\tlocation /hbnb_static/ {\n\t\talias /data/web_static/current/;\n\t}" /etc/nginx/sites-available/default'
+    command => 'sudo sed -i "61i \\n\tlocation /hbnb_static/ {\n\t\talias /data/web_static/current/;\n\t}" /etc/nginx/sites-available/default'
     path    => ['/usr/bin', '/usr/sbin',],
     require => Package['nginx'],
 }
