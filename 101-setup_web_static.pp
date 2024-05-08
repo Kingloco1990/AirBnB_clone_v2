@@ -10,31 +10,31 @@ package { 'nginx':
 }
 
 exec { 'test':
-    command => sudo mkdir -p /data/web_static/releases/test/,
+    command => 'sudo mkdir -p /data/web_static/releases/test/',
     path    => ['/usr/bin', '/usr/sbin',],
     require => Package['nginx'],
 }
 
 exec { 'shared':
-    command => sudo mkdir -p /data/web_static/shared/,
+    command => 'sudo mkdir -p /data/web_static/shared/',
     path    => ['/usr/bin', '/usr/sbin',],
     require => Package['nginx'],
 }
 
 exec { 'index.html':
-    command => echo Hi | sudo tee /data/web_static/releases/test/index.html >/dev/null,
+    command => 'echo Hi | sudo tee /data/web_static/releases/test/index.html >/dev/null',
     path    => ['/usr/bin', '/usr/sbin',],
     require => Package['nginx'],
 }
 
 exec { 'symbolic link':
-    command => ln -sf /data/web_static/releases/test/ /data/web_static/current,
+    command => 'ln -sf /data/web_static/releases/test/ /data/web_static/current',
     path    => ['/usr/bin', '/usr/sbin',],
     require => Package['nginx'],
 }
 
 exec { 'ownership':
-    command => sudo chown -R ubuntu:ubuntu /data/,
+    command => 'sudo chown -R ubuntu:ubuntu /data/',
     path    => ['/usr/bin', '/usr/sbin',],
     require => Package['nginx'],
 }
