@@ -1,18 +1,12 @@
 # Puppet manifest to set up an Nginx server with custom configurations and content
 
-# Check if Nginx is installed
-if ! command -v nginx &> /dev/null {
-  # Update package lists
-  exec { 'apt-get update':
-    command => 'apt-get update',
-    path    => ['/bin', '/usr/bin'],
-  }
+exec { 'apt-get-update':
+    command => '/usr/bin/apt-get update',
+}
 
-  # Install Nginx
-  package { 'nginx':
-    ensure => installed,
-    require => Exec['apt-get update'],
-  }
+package { 'nginx':
+    ensure  => installed,
+    require => Exec['apt-get-update'],
 }
 
 # Create necessary directories for web_static
