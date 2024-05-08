@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""This script deletes out-of-date archives using the function do_clean."""
+"""This script deletes out-of-date archives using the do_clean function."""
 from fabric.api import local, run, env
 from os.path import exists
 
@@ -18,6 +18,7 @@ def do_clean(number=0):
     Returns:
         None
     """
+    # Ensure the number of archives is at least 1
     if int(number) == 0:
         number = 1
     number = int(number) + 1
@@ -28,7 +29,9 @@ def do_clean(number=0):
 
     # Delete unnecessary archives in the /data/web_static/releases folder
     releases_folder = "/data/web_static/releases"
+    # Get the list of releases and split them into a list
     releases = run("ls -tr {} | tail -n +{}".format(
         releases_folder, number)).split('\n')
     for release in releases:
+        # Remove each release
         run("rm -rf {}/{}".format(releases_folder, release))
