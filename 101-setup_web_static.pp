@@ -40,7 +40,7 @@ exec { 'change_ownership':
 
 # Append location block to Nginx configuration file
 exec { 'append_location_block':
-  command => 'sudo sed -i "61i \\n\tlocation /hbnb_static/ {\n\t\talias /data/web_static/current/;\n\t}" /etc/nginx/sites-available/default',
+  command => 'sed -i "/^server {/a \\tlocation \/hbnb_static\/ {\n\t\talias /data/web_static/current/;\n\t}\n" /etc/nginx/sites-available/default',
   unless  => 'grep -qF "location /hbnb_static" /etc/nginx/sites-available/default',
   provider => shell,
   require  => Package['nginx'],
