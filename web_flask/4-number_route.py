@@ -101,7 +101,7 @@ def python_text(text="is cool"):
     return f"Python {text}"
 
 
-@app.route("/number/<n>", strict_slashes=False)
+@app.route("/number/<int:n>", strict_slashes=False)
 def number_n(n):
     """
     Handle GET requests on the /number/<n> endpoint.
@@ -112,8 +112,7 @@ def number_n(n):
     Returns:
         str: The string "<n> is a number" if <n> is an integer.
     """
-    if n.isdigit():
-        return f"{n} is a number"
+    return f"{n} is a number"
 
 
 if __name__ == "__main__":
