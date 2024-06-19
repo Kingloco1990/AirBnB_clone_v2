@@ -14,6 +14,11 @@ This script initializes a Flask web application with the following endpoints:
    - Returns the string "C" followed by the value of the text variable
      with underscores replaced by spaces.
 
+4. GET /python/(<text>):
+   - Returns the string "Python" followed by the value of the text variable
+     with underscores replaced by spaces. Defaults to "is cool" if <text>
+     is not provided.
+
 Usage:
     Start the server by running this script. It listens on all interfaces
     (0.0.0.0) on port 5000.
@@ -23,6 +28,8 @@ Endpoints:
     - GET /hbnb - Returns "HBNB".
     - GET /c/<text> - Returns "C <text>", where <text> is a string with
       underscores replaced by spaces.
+    - GET /python/(<text>) - Returns "Python <text>", where <text> is a string
+      with underscores replaced by spaces. Defaults to "is cool" if <text> is not provided.
 
 """
 
@@ -59,12 +66,10 @@ def c_text(text):
     Handle GET requests on the /c/<text> endpoint.
 
     Args:
-        text (str): The text to be displayed,
-        with underscores replaced by spaces.
+        text (str): The text to be displayed, with underscores replaced by spaces.
 
     Returns:
-        str: The string "C <text>", where
-        <text> has underscores replaced by spaces.
+        str: The string "C <text>", where <text> has underscores replaced by spaces.
     """
     text = text.replace("_", " ")
     return f"C {text}"
@@ -74,6 +79,14 @@ def c_text(text):
 @app.route("/python/", strict_slashes=False)
 def python_text(text="is cool"):
     """
+    Handle GET requests on the /python/<text> endpoint.
+
+    Args:
+        text (str, optional): The text to be displayed, with underscores replaced by spaces.
+                              Defaults to "is cool" if not provided.
+
+    Returns:
+        str: The string "Python <text>", where <text> has underscores replaced by spaces.
     """
     text = text.replace("_", " ")
     return f"Python {text}"
