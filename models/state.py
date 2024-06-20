@@ -12,11 +12,9 @@ class State(BaseModel, Base):
     """ State class """
     __tablename__ = 'states'
     name = Column(String(128), nullable=False)
+    cities = relationship('City', backref='state', cascade='delete')
 
-    if getenv("HBNB_TYPE_STORAGE") == "db":
-        cities = relationship('City', backref='state', cascade='delete')
-
-    if getenv("HBNB_TYPE_STORAGE") == "FileStorage":
+    if getenv("HBNB_TYPE_STORAGE") != "db":
         @property
         def cities(self):
             """Getter attribute that returns a list of City instances
