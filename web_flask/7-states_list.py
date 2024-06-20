@@ -31,12 +31,14 @@ def state_list():
     Returns:
         str: Rendered HTML template with the list of states.
     """
-    states = storage.all(State)
-    return render_template('7-states_list.html', states=states)
+    states = list(storage.all(State).values())
+    sorted_states = sorted(states, key=lambda x: x.name)
+    return render_template('7-states_list.html',
+                           states=sorted_states)
 
 
 @app.teardown_appcontext
-def teardown(error):
+def teardown(exception):
     """
     Closes the storage on teardown.
 
