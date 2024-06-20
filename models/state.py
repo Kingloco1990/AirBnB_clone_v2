@@ -39,7 +39,7 @@ class State(BaseModel, Base):
 
             # Filter City instances that have state_id equal to the
             # current State's id.
-            for obj in my_obj.values():
+            for obj in list(my_obj.values()):
                 if obj.state_id == self.id:
                     my_list.append(obj)
 
