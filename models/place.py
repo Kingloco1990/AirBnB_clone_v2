@@ -66,9 +66,6 @@ class Place(BaseModel, Base):
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
     amenity_ids = []
-
-
-if getenv("HBNB_TYPE_STORAGE") == "db":
     reviews = relationship('Review', backref='place', cascade='delete')
     amenities = relationship(
         'Amenity',
@@ -139,3 +136,5 @@ if getenv("HBNB_TYPE_STORAGE") == "FileStorage":
         """
         if type(value) == Amenity:
             self.amenity_ids.append(value.id)
+
+
