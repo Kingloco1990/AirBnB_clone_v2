@@ -131,3 +131,11 @@ class DBStorage:
 
         # Create a session.
         self.__session = Scope_session()
+
+    def close(self):
+        """Close the current database session.
+
+        Calls the close method on the current session to properly
+        close any open connections.
+        """""
+        self.__session.close()
