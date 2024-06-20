@@ -31,10 +31,8 @@ def state_list():
     Returns:
         str: Rendered HTML template with the list of states.
     """
-    states = list(storage.all(State).values())
-    sorted_states = sorted(states, key=lambda x: x.name)
-    return render_template('7-states_list.html',
-                           states=sorted_states)
+    states = storage.all("State")
+    return render_template("7-states_list.html", states=states)
 
 
 @app.teardown_appcontext
