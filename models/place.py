@@ -70,7 +70,8 @@ class Place(BaseModel, Base):
     amenities = relationship(
         'Amenity',
         secondary='place_amenity',
-        viewonly=False
+        viewonly=False,
+        back_populates="place_amenities"
     )
 
 if getenv("HBNB_TYPE_STORAGE") == "FileStorage":
