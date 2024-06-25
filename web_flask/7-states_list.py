@@ -31,7 +31,8 @@ def state_list():
     Returns:
         str: Rendered HTML template with the list of states.
     """
-    states = storage.all(State).values() # Retrieve all State objects from storage
+    # Retrieve all State objects from storage
+    states = storage.all(State).values()
     return render_template("7-states_list.html", states=states)
 
 
