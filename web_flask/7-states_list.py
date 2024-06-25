@@ -33,6 +33,8 @@ def state_list():
     """
     # Retrieve all State objects from storage
     states = storage.all(State).values()
+    # Sorting states by name
+    states = sorted(states, key=lambda x: x.name)
     return render_template("7-states_list.html", states=states)
 
 
