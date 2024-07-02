@@ -55,12 +55,10 @@ def states_id(id):
         str: Rendered HTML template with the details of the State object, or
         a template with no state if the ID is not found.
     """
-    state = None
-    for s in storage.all(State).values():
-        if s.id == id:
-            state = s
-            break
-    return render_template('9-states.html', state=state)
+    for state in storage.all(State).values():
+        if state.id == id:
+            return render_template('9-states.html', state=state)
+    return render_template('9-states.html')
 
 
 @app.teardown_appcontext
