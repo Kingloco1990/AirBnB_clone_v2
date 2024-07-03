@@ -15,9 +15,8 @@ Endpoints:
     /states/<id>:
         Displays the details of a State object with the specified ID.
 """
-
-from flask import Flask, render_template
 from models import storage
+from flask import Flask, render_template
 from models.state import State
 
 app = Flask(__name__)
