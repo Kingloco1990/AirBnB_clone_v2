@@ -1,89 +1,80 @@
 #!/usr/bin/python3
-""" module doc """
-from flask import Flask
-from flask import render_template
+"""
+Starts a Flask web application.
+
+This script defines a basic Flask web server that serves a list of states
+stored in a database. The server listens on all interfaces (0.0.0.0)
+on port 5000.
+
+Usage:
+    Start the server by running this script.
+
+Endpoints:
+    /states:
+        Displays a sorted list of all State objects present in storage.
+    /states/<id>:
+        Displays the details of a State object with the specified ID.
+"""
+
+from flask import Flask, render_template
 from models import storage
 from models.state import State
 
 app = Flask(__name__)
 
 
-@app.route("/", strict_slashes=False)
-def hello():
-    """ def doc """
-    return "Hello HBNB!"
+@app.route('/states', strict_slashes=False)
+def states():
+    """
+    Displays a sorted list of all State objects.
+
+    This view function queries the storage for all State objects, sorts them
+    alphabetically by state name, and renders a template to display the sorted
+    list of states.
+
+    Returns:
+        str: Rendered HTML template with the list of states.
+    """
+    states = storage.all(State).values()
+    states = sorted(states, key=lambda x: x.name)
+    return render_template('9-states.html', states=states)
 
 
-@app.route("/hbnb", strict_slashes=False)
-def hbnb():
-    """ def doc """
-    return "HBNB"
+@app.route('/states/<id>', strict_slashes=False)
+def states_id(id):
+    """
+    Displays the details of a specific State object.
 
+    This view function queries the storage for a State object with the given ID
+    and renders a template to display its details.
 
-@app.route('/c/<text>', strict_slashes=False)
-def c(text):
-    """ def doc """
-    return 'c {}'.format(text.replace("_", " "))
+    Args:
+        id (str): The ID of the State object to retrieve.
 
-
-@app.route('/python', defaults={'text': 'is cool'}, strict_slashes=False)
-@app.route('/python/<text>', strict_slashes=False)
-def python(text):
-    """ def doc """
-    return 'Python {}'.format(text.replace("_", " "))
-
-
-@app.route('/number/<int:n>', strict_slashes=False)
-def number(n):
-    """ def doc """
-    return '{} is a number'.format(n)
-
-
-@app.route('/number_odd_or_even/<int:n>', strict_slashes=False)
-def number_odd_or_even(n):
-    """ def doc """
-    if n % 2 == 0:
-        p = 'even'
-    else:
-        p = 'odd'
-    return render_template('6-number_odd_or_even.html', number=n, parity=p)
-
-
-@app.route('/states_list', strict_slashes=False)
-def states_list():
-    """ def doc """
-    states = storage.all(State)
-    return render_template('7-states_list.html', states=states)
+    Returns:
+        str: Rendered HTML template with the details of the State object, or
+        a template with no state if the ID is not found.
+    """
+    for state in storage.all(State).values():
+        if state.id == id:
+            return render_template('9-states.html', state=state)
+    return render_template('9-states.html')
 
 
 @app.teardown_appcontext
-def close(error):
-    """ def doc """
+def teardown(exception):
+    """
+    Closes the storage connection on teardown.
+
+    This function is called after each request to ensure that any
+    open database connections are properly closed, preventing
+    potential resource leaks.
+
+    Args:
+        exception (Exception): The exception that triggered the teardown,
+            if any. Unused in this implementation.
+    """
     storage.close()
-
-
-@app.route('/cities_by_states', strict_slashes=False)
-def cities_by_states():
-    """ def doc """
-    states = storage.all(State)
-    return render_template('8-cities_by_states.html', states=states)
-
-
-@app.route('/states', strict_slashes=False)
-@app.route('/states/<id>', strict_slashes=False)
-def states(id=None):
-    """ Route function for /states and /states/<id> """
-    not_found = False
-    if id is not None:
-        states = storage.all(State, id)
-        with_id = True
-        if len(states) == 0:
-            not_found = True
-    else:
-        states = storage.all(State)
-        with_id = False
-    return render_template('9-states.html', states=states,
-                           with_id=with_id, not_found=not_found)
 
 
 if __name__ == "__main__":
